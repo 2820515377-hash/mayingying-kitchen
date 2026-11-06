@@ -1,286 +1,90 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>马盈盈大厨食堂</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f9e5dc">
+<title>马盈盈大厨食堂 · 在线点餐</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#fff8ef;color:#47342c;font-family:Arial,"Microsoft YaHei",sans-serif}
-header{background:#f8d8c8;text-align:center;padding:30px 15px;border-radius:0 0 28px 28px}
-h1{margin:0;font-size:29px}
-header p{margin:10px 0 0;color:#865e50}
-nav{display:flex;justify-content:center;gap:12px;padding:18px}
-button{border:0;cursor:pointer;font-size:15px}
-nav button{background:white;color:#704b3f;padding:12px 22px;border-radius:25px}
-nav button.active,.primary{background:#d77d67;color:white}
-main{max-width:900px;margin:auto;padding:10px 18px 45px}
-h2{font-size:23px}
-.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
-.card{background:white;border-radius:18px;padding:20px;box-shadow:0 3px 12px #0000000b}
-.emoji{font-size:42px}
-.card h3{margin:12px 0 6px}
-.price{color:#d26b52;font-weight:bold;font-size:20px}
-.primary{padding:12px 20px;border-radius:12px}
-.card button{width:100%;margin-top:12px}
-.panel{background:white;border-radius:18px;padding:20px;margin-top:20px}
-input,textarea,select{width:100%;border:1px solid #e5d6ce;border-radius:10px;padding:12px;margin:8px 0;font:inherit}
-textarea{min-height:75px}
-.line{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #f0e5df}
-.small{color:#8c7770;font-size:13px}
-.actions{display:flex;gap:8px;align-items:center}
-.actions button{background:#f8e3d9;border-radius:8px;padding:7px 12px}
-.total{font-size:20px;text-align:right;margin:20px 0}
-.hidden{display:none}
-.order{background:#fff8f2;border-radius:14px;padding:15px;margin:12px 0}
-.order p{margin:7px 0}
-.danger{background:#fbe1df;color:#b44343;border-radius:9px;padding:9px}
-.success{background:#e2f4e5;color:#357345;border-radius:9px;padding:9px}
-footer{text-align:center;color:#a28c82;padding:25px}
-@media(max-width:500px){h1{font-size:25px}.menu{grid-template-columns:1fr 1fr;gap:10px}.card{padding:14px}.card h3{font-size:16px}.emoji{font-size:34px}}
+:root{--ink:#4a342f;--muted:#947a71;--rose:#d96c74;--rose-deep:#b84c59;--cream:#fffaf5;--line:#f0ddd5;--shadow:0 8px 32px #a76b5615}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#fde7dc 0,#fff9f3 275px,#fff9f3 100%);font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink)}
+button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}button:disabled{opacity:.55;cursor:not-allowed}header{padding:38px 22px 26px;text-align:center}header .icon{font-size:40px;line-height:1.15}header h1{font-size:clamp(25px,5.5vw,36px);margin:8px 0 6px;letter-spacing:2px}header p{color:#976d69;margin:0;font-size:14px}
+.shell{max-width:960px;margin:0 auto;padding:0 16px 50px}.tabs{display:flex;max-width:460px;gap:8px;background:#fff8f4;border:1px solid #f2dbd4;border-radius:24px;padding:7px;margin:0 auto 24px;box-shadow:var(--shadow)}.tab{flex:1;border-radius:18px;padding:13px 7px;background:transparent;color:#a07c74;font-weight:700}.tab.active{background:#dc7b7c;color:#fff;box-shadow:0 4px 12px #b86b6a26}
+h2{font-size:21px;margin:24px 0 14px;display:flex;align-items:center;gap:8px}.section-meta{font-weight:400;font-size:12px;color:var(--muted);margin-left:auto}.menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.dish{background:#fff;border:1px solid #f7e9e1;border-radius:20px;padding:19px;box-shadow:var(--shadow)}.food-icon{font-size:50px;background:#fff5ef;border-radius:14px;text-align:center;padding:15px 5px}.dish h3{font-size:17px;margin:14px 0 7px;overflow-wrap:anywhere}.dish .foot{display:flex;align-items:center;justify-content:space-between;gap:6px}.money{font-weight:800;color:#ce5b60}.dish .add{background:#df8580;color:white;width:39px;height:39px;border-radius:13px;font-size:22px;box-shadow:0 5px 11px #cc777331}
+.panel{background:white;border:1px solid #f3e6df;border-radius:22px;padding:22px;box-shadow:var(--shadow);margin-top:22px}.panel h2{margin-top:0}.empty{background:#fff8f5;border:1px dashed #edd6ce;border-radius:14px;padding:20px;text-align:center;color:var(--muted);line-height:1.8}.row{display:flex;gap:10px;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #f7ebe5}.row:last-child{border-bottom:0}.row-title{font-weight:650;overflow-wrap:anywhere}.small{font-size:12px;color:var(--muted)}.qty{display:flex;align-items:center;gap:9px}.mini{border-radius:10px;background:#fae7df;color:#94574d;min-width:33px;height:33px;font-weight:bold}
+.total{display:flex;justify-content:space-between;align-items:center;margin:18px 0 14px;font-size:20px;font-weight:800}.field{display:block;font-size:14px;font-weight:700;margin:15px 0 6px}input,textarea,select{width:100%;min-height:46px;padding:11px 13px;background:#fffdfb;border:1px solid #ebd7cd;border-radius:12px;outline:none;color:var(--ink)}input:focus,textarea:focus,select:focus{border-color:#d88881;box-shadow:0 0 0 3px #da7a711a}textarea{min-height:80px;resize:vertical}.primary{background:#d96c74;color:white;border-radius:13px;padding:14px 18px;font-weight:800}.primary.full{width:100%;margin-top:15px}.outline{background:#fff8f5;color:#a35b57;border:1px solid #edcfc8;border-radius:11px;padding:9px 13px}.danger{background:#fff0ed;color:#c45151;border-radius:11px;padding:9px 13px}.success{color:#34835b}.muted{color:var(--muted)}
+#chef{display:none}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.statusline{display:flex;align-items:center;gap:7px;font-size:13px;color:#66846f}.dot{width:8px;height:8px;background:#49b67b;border-radius:50%;box-shadow:0 0 0 4px #dbf6e5}.order{background:#fffaf7;border:1px solid #f2e2da;border-radius:15px;padding:16px;margin:12px 0}.order-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.order h3{margin:0;font-size:17px}.pill{padding:5px 9px;border-radius:20px;background:#f8e3d9;font-size:12px;color:#a36355}.order .order-items{margin:12px 0;line-height:1.85}.order-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}.order-actions select{width:auto;min-width:140px}.order-actions button{min-height:43px}.edit-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:11px 0;border-bottom:1px solid #f8ebe4;flex-wrap:wrap}.edit-row .info{flex:1;min-width:155px}.edit-row .btns{display:flex;gap:7px}.grid-form{display:grid;grid-template-columns:1fr 130px 115px;gap:9px}.grid-form input,.grid-form select{margin:0}.hidden{display:none!important}.notice{margin:0 0 14px;padding:12px 15px;border-radius:12px;background:#fff0e3;color:#a3684d;font-size:13px}.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#493733;color:#fff;padding:12px 20px;border-radius:14px;box-shadow:0 8px 30px #0003;z-index:100;max-width:90vw;text-align:center;display:none}.toast.show{display:block}footer{text-align:center;font-size:12px;color:#b99b90;padding:18px}
+@media(max-width:720px){.menu{grid-template-columns:repeat(2,minmax(0,1fr))}.dish{padding:13px}.food-icon{font-size:38px;padding:11px 5px}.dish h3{font-size:15px}.panel{padding:17px}.grid-form{grid-template-columns:1fr 1fr}.grid-form input:first-child{grid-column:1/-1}.section-meta{font-size:11px}}@media(max-width:350px){.menu{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<header>
-<h1>🍓 马盈盈大厨食堂</h1>
-<p>好好吃饭，慢慢生活 ♡</p>
-</header>
-
-<nav>
-<button id="customerTab" class="active" onclick="switchPage('customer')">🍽️ 我要点餐</button>
-<button id="chefTab" onclick="switchPage('chef')">👩‍🍳 厨师后台</button>
-</nav>
-
-<main>
+<header><div class="icon">🍓</div><h1>马盈盈大厨食堂</h1><p>好好吃饭，慢慢生活 ♡ 每一餐都有小幸福</p></header>
+<div class="shell">
+<nav class="tabs" aria-label="切换页面"><button class="tab active" id="customerTab" type="button">🍽️ 我要点餐</button><button class="tab" id="chefTab" type="button">👩‍🍳 厨师工作台</button></nav>
 <section id="customer">
-<h2>今日菜单 ✨</h2>
+<h2>🌷 今日菜单 <span class="section-meta" id="menuHint">连接云端中…</span></h2>
 <div id="menu" class="menu"></div>
 <div class="panel">
-<h2>🛒 我的购物车</h2>
-<div id="cart"></div>
-<div class="total" id="total"></div>
-<input id="customerName" placeholder="你的名字 / 昵称">
-<textarea id="remark" placeholder="口味要求、忌口或其他备注"></textarea>
-<button class="primary" style="width:100%" onclick="submitOrder()">确认下单 ♡</button>
-</div>
-</section>
-
-<section id="chef" class="hidden">
-<h2>👩‍🍳 厨师工作台</h2>
-<p class="small">管理菜单和查看顾客订单</p>
-<div class="panel">
-<h2>📋 收到的订单</h2>
-<div id="orders"></div>
-</div>
-<div class="panel">
-<h2>➕ 添加新菜品</h2>
-<input id="dishName" placeholder="菜品名称">
-<input id="dishPrice" type="number" min="0" step="0.01" placeholder="价格（元）">
-<select id="dishEmoji">
-<option value="🍚">🍚 米饭</option>
-<option value="🍜">🍜 面条</option>
-<option value="🍲">🍲 汤锅</option>
-<option value="🍗">🍗 鸡肉</option>
-<option value="🥩">🥩 肉类</option>
-<option value="🥗">🥗 沙拉</option>
-<option value="🍰">🍰 甜点</option>
-<option value="🥤">🥤 饮料</option>
-<option value="🍓">🍓 水果</option>
-<option value="🍽️">🍽️ 其他</option>
-</select>
-<button class="primary" onclick="addDish()">添加到菜单</button>
-<h3>现有菜品</h3>
-<div id="dishManager"></div>
-</div>
-</section>
-</main>
-<footer>♡ 马盈盈大厨食堂 · 用心做好每一餐 ♡</footer>
-
+<h2>🛒 我的购物车</h2><div id="cart"></div><div class="total"><span>合计</span><span id="total">¥0.00</span></div>
+<label class="field" for="customerName">点餐人名字</label><input id="customerName" maxlength="40" placeholder="例如：小明" autocomplete="name">
+<label class="field" for="remark">口味和备注（可不填）</label><textarea id="remark" maxlength="300" placeholder="例如：不要辣，多加米饭…"></textarea>
+<button id="placeOrder" class="primary full" type="button">💗 确认下单</button>
+<p class="small">提交后，订单会保存到云端并显示在厨师工作台。此页面不提供在线支付。</p>
+</div></section>
+<section id="chef">
+<div class="panel" id="pinPanel"><h2>🔐 厨师管理</h2><p class="muted">顾客无需登录。厨师输入管理密码，即可跨手机查看订单。</p>
+<label class="field" for="chefPin">厨师管理密码</label><input type="password" id="chefPin" placeholder="请输入 Cloudflare 设置的 CHEF_PIN" autocomplete="off">
+<button class="primary full" id="unlockChef" type="button">进入厨师工作台</button></div>
+<div id="chefContent" class="hidden">
+<div class="toolbar"><h2>📋 实时订单 <span id="orderCount" class="section-meta"></span></h2><div class="statusline"><span class="dot"></span><span>每 5 秒自动刷新</span></div></div>
+<div id="orderNotice" class="notice hidden"></div><div id="orders"></div>
+<div class="panel"><h2>🍲 菜品管理</h2><div id="dishManager"></div><h3>添加新菜品</h3>
+<div class="grid-form"><input id="dishName" maxlength="40" placeholder="菜品名称"><input id="dishPrice" type="number" inputmode="decimal" min="0" step="0.01" placeholder="价格（元）">
+<select id="dishEmoji" aria-label="菜品图标"><option>🍽️</option><option>🍚</option><option>🍜</option><option>🍲</option><option>🍗</option><option>🥩</option><option>🥗</option><option>🍰</option><option>🥤</option><option>🍓</option><option>🍳</option><option>🍝</option><option>🍔</option><option>🍕</option><option>🥟</option><option>🍛</option><option>🍤</option><option>🍮</option></select></div>
+<button id="addDish" class="primary full" type="button">＋ 添加菜品</button></div>
+<div style="text-align:center;margin-top:15px"><button id="lockChef" class="outline" type="button">退出厨师工作台</button></div>
+</div></section>
+</div><footer>♡ 马盈盈大厨食堂 · 用心做好每一餐 ♡</footer>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script>
-const MENU_KEY="myy_menu_v1";
-const ORDER_KEY="myy_orders_v1";
-
-const defaultMenu=[
-{id:"d1",name:"番茄炒蛋",price:16,emoji:"🍳"},
-{id:"d2",name:"可乐鸡翅",price:28,emoji:"🍗"},
-{id:"d3",name:"红烧肉",price:35,emoji:"🥩"},
-{id:"d4",name:"蛋炒饭",price:15,emoji:"🍚"},
-{id:"d5",name:"酸辣粉",price:18,emoji:"🍜"},
-{id:"d6",name:"草莓甜品",price:20,emoji:"🍓"}
-];
-
-function load(key,fallback){
-try{
-const value=JSON.parse(localStorage.getItem(key));
-return Array.isArray(value)?value:fallback;
-}catch(e){return fallback;}
+'use strict';
+const $=id=>document.getElementById(id);
+const state={page:'customer',dishes:[],cart:{},orders:[],pin:sessionStorage.getItem('myy_chef_pin')||'',orderSnapshot:'',menuSnapshot:'',busy:false};
+const emojiChoices=['🍽️','🍚','🍜','🍲','🍗','🥩','🥗','🍰','🥤','🍓','🍳','🍝','🍔','🍕','🥟','🍛','🍤','🍮'];
+const money=cents=>'¥'+(Number(cents||0)/100).toFixed(2);
+const make=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n};
+const btn=(label,cls,cb)=>{const b=make('button',cls,label);b.type='button';b.addEventListener('click',cb);return b};
+let toastTimer;
+function notify(message){$('toast').textContent=message;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),3600)}
+async function api(path,opts={}){
+ const resp=await fetch('/api/'+path,{method:opts.method||'GET',headers:{...(opts.body?{'Content-Type':'application/json'}:{}),...(opts.chef?{'X-Chef-Pin':state.pin}:{})},body:opts.body?JSON.stringify(opts.body):undefined,cache:'no-store'});
+ let data;try{data=await resp.json()}catch{throw new Error('云端接口没有正常响应，请检查部署设置')}
+ if(!resp.ok)throw new Error(data.error||'服务器错误 '+resp.status);
+ return data;
 }
-let dishes=load(MENU_KEY,defaultMenu);
-let orders=load(ORDER_KEY,[]);
-let cart={};
-
-function save(){
-try{
-localStorage.setItem(MENU_KEY,JSON.stringify(dishes));
-localStorage.setItem(ORDER_KEY,JSON.stringify(orders));
-}catch(e){alert("数据保存失败，请检查浏览器存储空间");}
-}
-function money(n){return "¥"+Number(n).toFixed(2);}
-function el(tag,text){
-const node=document.createElement(tag);
-if(text!==undefined)node.textContent=text;
-return node;
-}
-function button(text,action,className){
-const b=el("button",text);
-if(className)b.className=className;
-b.addEventListener("click",action);
-return b;
-}
-function switchPage(page){
-document.getElementById("customer").classList.toggle("hidden",page!=="customer");
-document.getElementById("chef").classList.toggle("hidden",page!=="chef");
-document.getElementById("customerTab").classList.toggle("active",page==="customer");
-document.getElementById("chefTab").classList.toggle("active",page==="chef");
-renderAll();
-}
-function renderMenu(){
-const root=document.getElementById("menu");
-root.replaceChildren();
-if(!dishes.length)root.append(el("p","还没有菜品，等待大厨上新～"));
-dishes.forEach(d=>{
-const card=el("div");card.className="card";
-const emoji=el("div",d.emoji);emoji.className="emoji";
-const name=el("h3",d.name);
-const price=el("div",money(d.price));price.className="price";
-card.append(emoji,name,price,button("加入购物车 ＋",()=>addCart(d.id),"primary"));
-root.append(card);
-});
-}
-function addCart(id){
-cart[id]=(cart[id]||0)+1;
-renderCart();
-}
-function changeQty(id,delta){
-cart[id]=(cart[id]||0)+delta;
-if(cart[id]<=0)delete cart[id];
-renderCart();
-}
-function renderCart(){
-const root=document.getElementById("cart");
-root.replaceChildren();
-let total=0;
-const ids=Object.keys(cart);
-if(!ids.length)root.append(el("p","购物车还是空的，快去选喜欢的菜吧～"));
-ids.forEach(id=>{
-const d=dishes.find(x=>x.id===id);
-if(!d)return;
-total+=d.price*cart[id];
-const line=el("div");line.className="line";
-const detail=el("span",d.name+" · "+money(d.price));
-const actions=el("div");actions.className="actions";
-actions.append(button("−",()=>changeQty(id,-1)),el("span",String(cart[id])),button("+",()=>changeQty(id,1)));
-line.append(detail,actions);root.append(line);
-});
-document.getElementById("total").textContent="合计："+money(total);
-}
-function submitOrder(){
-const name=document.getElementById("customerName").value.trim();
-const items=Object.entries(cart).map(([id,qty])=>{
-const d=dishes.find(x=>x.id===id);
-return d?{name:d.name,price:d.price,qty}:null;
-}).filter(Boolean);
-if(!items.length){alert("请先选择菜品！");return;}
-if(!name){alert("请填写你的名字或昵称！");return;}
-const total=items.reduce((s,x)=>s+x.price*x.qty,0);
-const order={
-id:Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,7),
-name,items,total,
-remark:document.getElementById("remark").value.trim(),
-time:new Date().toLocaleString("zh-CN"),
-status:"待制作"
-};
-orders.unshift(order);
-save();
-cart={};
-document.getElementById("remark").value="";
-renderAll();
-alert("🎉 下单成功！大厨准备开工啦！");
-}
-function renderOrders(){
-const root=document.getElementById("orders");
-root.replaceChildren();
-if(!orders.length)root.append(el("p","暂时还没有订单～"));
-orders.forEach(o=>{
-const box=el("div");box.className="order";
-box.append(el("h3","🧾 "+o.name+" · "+o.status));
-box.append(el("p",o.time));
-o.items.forEach(i=>box.append(el("p",i.name+" × "+i.qty+"　"+money(i.price*i.qty))));
-box.append(el("p","总计："+money(o.total)));
-if(o.remark)box.append(el("p","备注："+o.remark));
-const select=el("select");
-["待制作","制作中","已完成"].forEach(s=>{
-const opt=el("option",s);opt.value=s;select.append(opt);
-});
-select.value=o.status;
-select.addEventListener("change",()=>{
-o.status=select.value;save();renderOrders();
-});
-box.append(select,button("删除订单",()=>{
-if(confirm("确定删除这条订单吗？")){
-orders=orders.filter(x=>x.id!==o.id);
-save();renderOrders();
-}
-},"danger"));
-root.append(box);
-});
-}
-function addDish(){
-const name=document.getElementById("dishName").value.trim();
-const priceText=document.getElementById("dishPrice").value;
-const price=Number(priceText);
-if(!name||priceText===""||!Number.isFinite(price)||price<0){
-alert("请输入正确的菜名和价格！");return;
-}
-dishes.push({
-id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),
-name,price,
-emoji:document.getElementById("dishEmoji").value
-});
-save();
-document.getElementById("dishName").value="";
-document.getElementById("dishPrice").value="";
-renderAll();
-alert("新菜品已上架！");
-}
-function renderDishManager(){
-const root=document.getElementById("dishManager");
-root.replaceChildren();
-dishes.forEach(d=>{
-const line=el("div");line.className="line";
-line.append(el("span",d.emoji+" "+d.name+" · "+money(d.price)));
-const actions=el("div");actions.className="actions";
-actions.append(button("改价",()=>{
-const v=prompt("请输入新价格",String(d.price));
-if(v===null)return;
-const n=Number(v);
-if(v.trim()===""||!Number.isFinite(n)||n<0){alert("价格不正确");return;}
-d.price=n;save();renderAll();
-}),button("删除",()=>{
-if(confirm("确定删除 "+d.name+" 吗？")){
-dishes=dishes.filter(x=>x.id!==d.id);
-delete cart[d.id];
-save();renderAll();
-}
-},"danger"));
-line.append(actions);root.append(line);
-});
-}
-function renderAll(){
-renderMenu();renderCart();renderOrders();renderDishManager();
-}
-renderAll();
+function showPage(page){state.page=page;$('customer').style.display=page==='customer'?'block':'none';$('chef').style.display=page==='chef'?'block':'none';$('customerTab').classList.toggle('active',page==='customer');$('chefTab').classList.toggle('active',page==='chef');if(page==='chef'){renderChefGate();if(state.pin)refreshOrders(true)}else refreshMenu(true)}
+$('customerTab').addEventListener('click',()=>showPage('customer'));
+$('chefTab').addEventListener('click',()=>showPage('chef'));
+function renderChefGate(){const unlocked=Boolean(state.pin);$('pinPanel').classList.toggle('hidden',unlocked);$('chefContent').classList.toggle('hidden',!unlocked)}
+async function refreshMenu(force=false){try{const {dishes}=await api('menu');const fingerprint=JSON.stringify(dishes);if(force||fingerprint!==state.menuSnapshot){state.dishes=dishes;state.menuSnapshot=fingerprint;renderMenu();renderCart();if(state.pin)renderDishManager()}$('menuHint').textContent='☁️ 菜单已同步'}catch(e){$('menuHint').textContent='⚠️ 菜单连接失败';if(force){$('menu').replaceChildren(make('div','empty',e.message))}console.warn(e)}}
+function renderMenu(){const box=$('menu');box.replaceChildren();if(!state.dishes.length){box.append(make('div','empty','菜单还没有菜品，等待大厨上新～'));return}for(const d of state.dishes){const card=make('article','dish');card.append(make('div','food-icon',d.emoji),make('h3','',d.name));const foot=make('div','foot');foot.append(make('span','money',money(d.price_cents)),btn('＋','add',()=>{state.cart[d.id]=(state.cart[d.id]||0)+1;renderCart();notify('已加入购物车 ♡')}));card.append(foot);box.append(card)}}
+function changeQty(id,diff){state.cart[id]=(state.cart[id]||0)+diff;if(state.cart[id]<=0)delete state.cart[id];renderCart()}
+function renderCart(){const box=$('cart');box.replaceChildren();let total=0;let count=0;for(const [id,qty] of Object.entries(state.cart)){const d=state.dishes.find(x=>x.id===id);if(!d){delete state.cart[id];continue}count+=qty;total+=qty*d.price_cents;const line=make('div','row');const detail=make('div');detail.append(make('div','row-title',d.emoji+' '+d.name),make('div','small',money(d.price_cents)+' / 份'));const actions=make('div','qty');actions.append(btn('−','mini',()=>changeQty(id,-1)),make('b','',String(qty)),btn('＋','mini',()=>changeQty(id,1)));line.append(detail,actions);box.append(line)}if(!count)box.append(make('div','empty','还没有选菜，快去挑喜欢的吧 ✨'));$('total').textContent=money(total)}
+$('placeOrder').addEventListener('click',async()=>{if(state.busy)return;const name=$('customerName').value.trim();const items=Object.entries(state.cart).map(([id,qty])=>({id,qty}));if(!name){notify('请先填写点餐人名字');return}if(!items.length){notify('先加几道菜再下单吧');return}state.busy=true;$('placeOrder').disabled=true;$('placeOrder').textContent='正在提交订单…';try{const result=await api('orders',{method:'POST',body:{name,remark:$('remark').value.trim(),items}});state.cart={};$('remark').value='';renderCart();notify('🎉 下单成功！厨师很快就能看到，订单号 '+result.id.slice(0,8));}catch(e){notify('下单失败：'+e.message);await refreshMenu(true)}finally{state.busy=false;$('placeOrder').disabled=false;$('placeOrder').textContent='💗 确认下单'}});
+$('unlockChef').addEventListener('click',async()=>{const pin=$('chefPin').value;if(!pin){notify('请输入厨师管理密码');return}state.pin=pin;try{await refreshOrders(true,true);sessionStorage.setItem('myy_chef_pin',pin);$('chefPin').value='';renderChefGate();await refreshMenu(true)}catch(e){state.pin='';notify('无法进入：'+e.message)}});
+$('chefPin').addEventListener('keydown',e=>{if(e.key==='Enter')$('unlockChef').click()});
+$('lockChef').addEventListener('click',()=>{state.pin='';sessionStorage.removeItem('myy_chef_pin');state.orders=[];state.orderSnapshot='';renderChefGate();notify('已退出厨师工作台')});
+function formatTime(sqliteTime){const dt=new Date(sqliteTime.includes('T')?sqliteTime:sqliteTime.replace(' ','T')+'Z');return Number.isNaN(dt.getTime())?sqliteTime:dt.toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false})}
+async function refreshOrders(force=false,strict=false){if(!state.pin)return;try{const data=await api('orders',{chef:true});const fingerprint=JSON.stringify(data.orders);if(force||fingerprint!==state.orderSnapshot){const prev=new Set(state.orders.map(o=>o.id));const newCount=state.orderSnapshot?data.orders.filter(o=>!prev.has(o.id)).length:0;state.orders=data.orders;state.orderSnapshot=fingerprint;renderOrders();if(newCount)notify('🔔 收到 '+newCount+' 笔新订单！')} $('orderNotice').classList.add('hidden')}catch(e){if(e.message.includes('密码')||e.message.includes('CHEF_PIN')){sessionStorage.removeItem('myy_chef_pin');state.pin='';renderChefGate()}if(strict)throw e;$('orderNotice').classList.remove('hidden');$('orderNotice').textContent='订单同步失败：'+e.message}}
+function renderOrders(){const box=$('orders');box.replaceChildren();$('orderCount').textContent=state.orders.length+' 单（最近 200 单）';if(!state.orders.length){box.append(make('div','empty','还没有收到订单。请让顾客用另一台手机下单测试～'));return}for(const o of state.orders){const card=make('article','order');const top=make('div','order-top');top.append(make('h3','', '🧾 '+o.name),make('span','pill',o.status));card.append(top,make('div','small',formatTime(o.created_at)+' · #'+o.id.slice(0,8)));const items=make('div','order-items');for(const item of o.items)items.append(make('div','',item.emoji+' '+item.name+' × '+item.qty+'　'+money(item.price_cents*item.qty)));card.append(items);if(o.remark)card.append(make('p','small','备注：'+o.remark));card.append(make('div','money','合计 '+money(o.total_cents)));const actions=make('div','order-actions');const select=make('select');for(const v of ['待制作','制作中','已完成','已取消']){const opt=new Option(v,v);select.add(opt)}select.value=o.status;select.addEventListener('change',async()=>{select.disabled=true;try{await api('orders',{method:'PATCH',chef:true,body:{id:o.id,status:select.value}});await refreshOrders(true);notify('已更新订单状态')}catch(e){notify('修改失败：'+e.message);select.value=o.status}finally{select.disabled=false}});actions.append(select,btn('删除订单','danger',async()=>{if(!confirm('确定永久删除这笔订单吗？'))return;try{await api('orders',{method:'DELETE',chef:true,body:{id:o.id}});await refreshOrders(true);notify('订单已删除')}catch(e){notify('删除失败：'+e.message)}}));card.append(actions);box.append(card)}}
+function priceCents(value){if(!/^\d+(?:\.\d{1,2})?$/.test(String(value).trim()))return null;const cents=Math.round(Number(value)*100);return Number.isSafeInteger(cents)&&cents<=10000000?cents:null}
+function renderDishManager(){const box=$('dishManager');box.replaceChildren();for(const d of state.dishes){const line=make('div','edit-row');const info=make('div','info');info.append(make('div','row-title',d.emoji+' '+d.name),make('div','money',money(d.price_cents)));const actions=make('div','btns');actions.append(btn('修改','outline',async()=>{const name=prompt('菜品名称：',d.name);if(name===null)return;const price=prompt('价格（元）：',(d.price_cents/100).toFixed(2));if(price===null)return;const cents=priceCents(price);if(!name.trim()||name.trim().length>40||cents===null){notify('菜名或价格格式不正确');return}try{await api('menu',{method:'PATCH',chef:true,body:{id:d.id,name:name.trim(),price_cents:cents,emoji:d.emoji}});await refreshMenu(true);notify('菜品已更新')}catch(e){notify(e.message)}}),btn('删除','danger',async()=>{if(!confirm('确定下架「'+d.name+'」吗？'))return;try{await api('menu',{method:'DELETE',chef:true,body:{id:d.id}});await refreshMenu(true);notify('菜品已下架')}catch(e){notify(e.message)}}));line.append(info,actions);box.append(line)}}
+$('addDish').addEventListener('click',async()=>{const name=$('dishName').value.trim();const cents=priceCents($('dishPrice').value);const emoji=$('dishEmoji').value;if(!name||name.length>40||cents===null||!emojiChoices.includes(emoji)){notify('请填写正确的菜名、价格和图标');return}try{await api('menu',{method:'POST',chef:true,body:{name,price_cents:cents,emoji}});$('dishName').value='';$('dishPrice').value='';await refreshMenu(true);notify('新菜品已同步给所有顾客')}catch(e){notify('添加失败：'+e.message)}});
+// 厨师页面自动刷新订单（每 5 秒），顾客菜单也定时同步（每 15 秒）
+setInterval(()=>{if(document.hidden)return;if(state.page==='chef'&&state.pin)refreshOrders();},5000);
+setInterval(()=>{if(document.hidden)return;refreshMenu();},15000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){refreshMenu();if(state.page==='chef'&&state.pin)refreshOrders()}});
+renderCart();renderChefGate();refreshMenu(true);
 </script>
 </body>
 </html>
