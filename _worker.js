@@ -1,6 +1,6 @@
 /**
  * 马盈盈大厨食堂 Cloudflare Pages advanced-mode Worker
- * Required bindings: D1 DB, secret CHEF_PIN (8+ chars).
+ * Required binding: D1 DB. CHEF_PIN (8+ chars) is only needed for management.
  */
 const h={'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff'};
 const send=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:h});
@@ -77,13 +77,13 @@ async function orders(req,env){
       .bind(id,d.name.trim(),(d.remark||'').trim(),JSON.stringify(items),total_cents,'待制作').run();
     return send({ok:true,id,total_cents},201);
   }
-  const denied=chefAuth(req,env);
-  if(denied)return denied;
   if(req.method==='GET'){
     const result=await env.DB.prepare('SELECT id,customer_name,remark,items_json,total_cents,status,created_at FROM orders ORDER BY created_at DESC,rowid DESC LIMIT 200').all();
     const orders=(result.results||[]).map(r=>({id:r.id,name:r.customer_name,remark:r.remark,items:JSON.parse(r.items_json),total_cents:r.total_cents,status:r.status,created_at:r.created_at}));
     return send({orders});
   }
+  const denied=chefAuth(req,env);
+  if(denied)return denied;
   if(!['PATCH','DELETE'].includes(req.method))return fail('请求方法不支持',405);
   const d=await readJson(req);
   if(!valid(d.id,1,100))return fail('订单编号不正确');
@@ -101,7 +101,8 @@ export default {
     if(!path.startsWith('/api/'))return env.ASSETS.fetch(req);
     if(!env.DB)return fail('数据库未连接：请在 Cloudflare Pages 绑定 D1，变量名 DB',503);
     try{
-      if(path==='/api/health'&&req.method==='GET')return send({ok:true,database:true,chef_pin_configured:typeof env.CHEF_PIN==='string'&&env.CHEF_PIN.length>=8});
+      if(path==='/api/health'&&req.method==='GET')return send({ok:true,database:true,orders_public:true,chef_pin_configured:typeof env.CHEF_PIN==='string'&&env.CHEF_PIN.length>=8});
+      if(path==='/api/chef'&&req.method==='GET')return chefAuth(req,env)||send({ok:true});
       if(path==='/api/menu')return await menu(req,env);
       if(path==='/api/orders')return await orders(req,env);
       return fail('接口不存在',404);
@@ -112,3 +113,4 @@ export default {
     }
   }
 };
+
