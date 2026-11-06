@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>马盈盈大厨食堂</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#fff8ef;color:#47342c;font-family:Arial,"Microsoft YaHei",sans-serif}
+header{background:#f8d8c8;text-align:center;padding:30px 15px;border-radius:0 0 28px 28px}
+h1{margin:0;font-size:29px}
+header p{margin:10px 0 0;color:#865e50}
+nav{display:flex;justify-content:center;gap:12px;padding:18px}
+button{border:0;cursor:pointer;font-size:15px}
+nav button{background:white;color:#704b3f;padding:12px 22px;border-radius:25px}
+nav button.active,.primary{background:#d77d67;color:white}
+main{max-width:900px;margin:auto;padding:10px 18px 45px}
+h2{font-size:23px}
+.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+.card{background:white;border-radius:18px;padding:20px;box-shadow:0 3px 12px #0000000b}
+.emoji{font-size:42px}
+.card h3{margin:12px 0 6px}
+.price{color:#d26b52;font-weight:bold;font-size:20px}
+.primary{padding:12px 20px;border-radius:12px}
+.card button{width:100%;margin-top:12px}
+.panel{background:white;border-radius:18px;padding:20px;margin-top:20px}
+input,textarea,select{width:100%;border:1px solid #e5d6ce;border-radius:10px;padding:12px;margin:8px 0;font:inherit}
+textarea{min-height:75px}
+.line{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #f0e5df}
+.small{color:#8c7770;font-size:13px}
+.actions{display:flex;gap:8px;align-items:center}
+.actions button{background:#f8e3d9;border-radius:8px;padding:7px 12px}
+.total{font-size:20px;text-align:right;margin:20px 0}
+.hidden{display:none}
+.order{background:#fff8f2;border-radius:14px;padding:15px;margin:12px 0}
+.order p{margin:7px 0}
+.danger{background:#fbe1df;color:#b44343;border-radius:9px;padding:9px}
+.success{background:#e2f4e5;color:#357345;border-radius:9px;padding:9px}
+footer{text-align:center;color:#a28c82;padding:25px}
+@media(max-width:500px){h1{font-size:25px}.menu{grid-template-columns:1fr 1fr;gap:10px}.card{padding:14px}.card h3{font-size:16px}.emoji{font-size:34px}}
+</style>
+</head>
+<body>
+<header>
+<h1>🍓 马盈盈大厨食堂</h1>
+<p>好好吃饭，慢慢生活 ♡</p>
+</header>
+
+<nav>
+<button id="customerTab" class="active" onclick="switchPage('customer')">🍽️ 我要点餐</button>
+<button id="chefTab" onclick="switchPage('chef')">👩‍🍳 厨师后台</button>
+</nav>
+
+<main>
+<section id="customer">
+<h2>今日菜单 ✨</h2>
+<div id="menu" class="menu"></div>
+<div class="panel">
+<h2>🛒 我的购物车</h2>
+<div id="cart"></div>
+<div class="total" id="total"></div>
+<input id="customerName" placeholder="你的名字 / 昵称">
+<textarea id="remark" placeholder="口味要求、忌口或其他备注"></textarea>
+<button class="primary" style="width:100%" onclick="submitOrder()">确认下单 ♡</button>
+</div>
+</section>
+
+<section id="chef" class="hidden">
+<h2>👩‍🍳 厨师工作台</h2>
+<p class="small">管理菜单和查看顾客订单</p>
+<div class="panel">
+<h2>📋 收到的订单</h2>
+<div id="orders"></div>
+</div>
+<div class="panel">
+<h2>➕ 添加新菜品</h2>
+<input id="dishName" placeholder="菜品名称">
+<input id="dishPrice" type="number" min="0" step="0.01" placeholder="价格（元）">
+<select id="dishEmoji">
+<option value="🍚">🍚 米饭</option>
+<option value="🍜">🍜 面条</option>
+<option value="🍲">🍲 汤锅</option>
+<option value="🍗">🍗 鸡肉</option>
+<option value="🥩">🥩 肉类</option>
+<option value="🥗">🥗 沙拉</option>
+<option value="🍰">🍰 甜点</option>
+<option value="🥤">🥤 饮料</option>
+<option value="🍓">🍓 水果</option>
+<option value="🍽️">🍽️ 其他</option>
+</select>
+<button class="primary" onclick="addDish()">添加到菜单</button>
+<h3>现有菜品</h3>
+<div id="dishManager"></div>
+</div>
+</section>
+</main>
+<footer>♡ 马盈盈大厨食堂 · 用心做好每一餐 ♡</footer>
+
+<script>
+const MENU_KEY="myy_menu_v1";
+const ORDER_KEY="myy_orders_v1";
+
+const defaultMenu=[
+{id:"d1",name:"番茄炒蛋",price:16,emoji:"🍳"},
+{id:"d2",name:"可乐鸡翅",price:28,emoji:"🍗"},
+{id:"d3",name:"红烧肉",price:35,emoji:"🥩"},
+{id:"d4",name:"蛋炒饭",price:15,emoji:"🍚"},
+{id:"d5",name:"酸辣粉",price:18,emoji:"🍜"},
+{id:"d6",name:"草莓甜品",price:20,emoji:"🍓"}
+];
+
+function load(key,fallback){
+try{
+const value=JSON.parse(localStorage.getItem(key));
+return Array.isArray(value)?value:fallback;
+}catch(e){return fallback;}
+}
+let dishes=load(MENU_KEY,defaultMenu);
+let orders=load(ORDER_KEY,[]);
+let cart={};
+
+function save(){
+try{
+localStorage.setItem(MENU_KEY,JSON.stringify(dishes));
+localStorage.setItem(ORDER_KEY,JSON.stringify(orders));
+}catch(e){alert("数据保存失败，请检查浏览器存储空间");}
+}
+function money(n){return "¥"+Number(n).toFixed(2);}
+function el(tag,text){
+const node=document.createElement(tag);
+if(text!==undefined)node.textContent=text;
+return node;
+}
+function button(text,action,className){
+const b=el("button",text);
+if(className)b.className=className;
+b.addEventListener("click",action);
+return b;
+}
+function switchPage(page){
+document.getElementById("customer").classList.toggle("hidden",page!=="customer");
+document.getElementById("chef").classList.toggle("hidden",page!=="chef");
+document.getElementById("customerTab").classList.toggle("active",page==="customer");
+document.getElementById("chefTab").classList.toggle("active",page==="chef");
+renderAll();
+}
+function renderMenu(){
+const root=document.getElementById("menu");
+root.replaceChildren();
+if(!dishes.length)root.append(el("p","还没有菜品，等待大厨上新～"));
+dishes.forEach(d=>{
+const card=el("div");card.className="card";
+const emoji=el("div",d.emoji);emoji.className="emoji";
+const name=el("h3",d.name);
+const price=el("div",money(d.price));price.className="price";
+card.append(emoji,name,price,button("加入购物车 ＋",()=>addCart(d.id),"primary"));
+root.append(card);
+});
+}
+function addCart(id){
+cart[id]=(cart[id]||0)+1;
+renderCart();
+}
+function changeQty(id,delta){
+cart[id]=(cart[id]||0)+delta;
+if(cart[id]<=0)delete cart[id];
+renderCart();
+}
+function renderCart(){
+const root=document.getElementById("cart");
+root.replaceChildren();
+let total=0;
+const ids=Object.keys(cart);
+if(!ids.length)root.append(el("p","购物车还是空的，快去选喜欢的菜吧～"));
+ids.forEach(id=>{
+const d=dishes.find(x=>x.id===id);
+if(!d)return;
+total+=d.price*cart[id];
+const line=el("div");line.className="line";
+const detail=el("span",d.name+" · "+money(d.price));
+const actions=el("div");actions.className="actions";
+actions.append(button("−",()=>changeQty(id,-1)),el("span",String(cart[id])),button("+",()=>changeQty(id,1)));
+line.append(detail,actions);root.append(line);
+});
+document.getElementById("total").textContent="合计："+money(total);
+}
+function submitOrder(){
+const name=document.getElementById("customerName").value.trim();
+const items=Object.entries(cart).map(([id,qty])=>{
+const d=dishes.find(x=>x.id===id);
+return d?{name:d.name,price:d.price,qty}:null;
+}).filter(Boolean);
+if(!items.length){alert("请先选择菜品！");return;}
+if(!name){alert("请填写你的名字或昵称！");return;}
+const total=items.reduce((s,x)=>s+x.price*x.qty,0);
+const order={
+id:Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,7),
+name,items,total,
+remark:document.getElementById("remark").value.trim(),
+time:new Date().toLocaleString("zh-CN"),
+status:"待制作"
+};
+orders.unshift(order);
+save();
+cart={};
+document.getElementById("remark").value="";
+renderAll();
+alert("🎉 下单成功！大厨准备开工啦！");
+}
+function renderOrders(){
+const root=document.getElementById("orders");
+root.replaceChildren();
+if(!orders.length)root.append(el("p","暂时还没有订单～"));
+orders.forEach(o=>{
+const box=el("div");box.className="order";
+box.append(el("h3","🧾 "+o.name+" · "+o.status));
+box.append(el("p",o.time));
+o.items.forEach(i=>box.append(el("p",i.name+" × "+i.qty+"　"+money(i.price*i.qty))));
+box.append(el("p","总计："+money(o.total)));
+if(o.remark)box.append(el("p","备注："+o.remark));
+const select=el("select");
+["待制作","制作中","已完成"].forEach(s=>{
+const opt=el("option",s);opt.value=s;select.append(opt);
+});
+select.value=o.status;
+select.addEventListener("change",()=>{
+o.status=select.value;save();renderOrders();
+});
+box.append(select,button("删除订单",()=>{
+if(confirm("确定删除这条订单吗？")){
+orders=orders.filter(x=>x.id!==o.id);
+save();renderOrders();
+}
+},"danger"));
+root.append(box);
+});
+}
+function addDish(){
+const name=document.getElementById("dishName").value.trim();
+const priceText=document.getElementById("dishPrice").value;
+const price=Number(priceText);
+if(!name||priceText===""||!Number.isFinite(price)||price<0){
+alert("请输入正确的菜名和价格！");return;
+}
+dishes.push({
+id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+name,price,
+emoji:document.getElementById("dishEmoji").value
+});
+save();
+document.getElementById("dishName").value="";
+document.getElementById("dishPrice").value="";
+renderAll();
+alert("新菜品已上架！");
+}
+function renderDishManager(){
+const root=document.getElementById("dishManager");
+root.replaceChildren();
+dishes.forEach(d=>{
+const line=el("div");line.className="line";
+line.append(el("span",d.emoji+" "+d.name+" · "+money(d.price)));
+const actions=el("div");actions.className="actions";
+actions.append(button("改价",()=>{
+const v=prompt("请输入新价格",String(d.price));
+if(v===null)return;
+const n=Number(v);
+if(v.trim()===""||!Number.isFinite(n)||n<0){alert("价格不正确");return;}
+d.price=n;save();renderAll();
+}),button("删除",()=>{
+if(confirm("确定删除 "+d.name+" 吗？")){
+dishes=dishes.filter(x=>x.id!==d.id);
+delete cart[d.id];
+save();renderAll();
+}
+},"danger"));
+line.append(actions);root.append(line);
+});
+}
+function renderAll(){
+renderMenu();renderCart();renderOrders();renderDishManager();
+}
+renderAll();
+</script>
+</body>
+</html>
